@@ -22,7 +22,7 @@ function addItem(name, drawer) {
 
 const drawerToAdd = [{ name: 'nickel', value: 5, quantity: 5 }];
 const updatedDrawer = addItem('nickel', drawerToAdd); // Adds 1 nickel
-console.log({updatedDrawer}); // [{ name: 'nickel', value: 5, quantity: 6 }];
+console.log({ updatedDrawer }); // [{ name: 'nickel', value: 5, quantity: 6 }];
 
 //*LVL2
 
@@ -81,6 +81,50 @@ function sumDrawer(drawer) {
   return `\$${result}`;
 }
 
-
 const total = sumDrawer(drawerSum); // Returns '$335.12'
-console.log({total})
+console.log({ total });
+
+//*LVL 4
+
+const drawerAmount = [
+  { name: 'penny', value: 1, quantity: 2 },
+  { name: 'nickel', value: 5, quantity: 0 },
+  { name: 'dime', value: 10, quantity: 0 },
+  { name: 'quarter', value: 25, quantity: 3 },
+  { name: 'one', value: 100, quantity: 2 },
+  { name: 'five', value: 500, quantity: 1 },
+  { name: 'ten', value: 1000, quantity: 1 },
+];
+
+function canMakeAmount(target, drawer) {
+  let drawerCopy = [...drawer].reverse();
+
+  function checkAmountRecursively(target, drawerIdx) {
+    if (target === 0) return true;
+    if (target < 0 || drawerIdx === drawerCopy.length) return false;
+
+    let currentRow = drawerCopy[drawerIdx];
+
+    for (let i = 0; i <= currentRow.quantity; i++) {
+      let amountToSubtract = i * currentRow.value;
+
+      if (
+        amountToSubtract <= target &&
+        checkAmountRecursively(target - amountToSubtract, drawerIdx + 1)
+      )
+        return true;
+    }
+
+    return false;
+  }
+
+  return checkAmountRecursively(target, 0);
+}
+
+const testAmount1 = canMakeAmount(613, drawerAmount); // Returns false
+const testAmount2 = canMakeAmount(1651, drawerAmount); // Returns true
+
+console.log({ testAmount1 });
+console.log({ testAmount2 });
+
+
