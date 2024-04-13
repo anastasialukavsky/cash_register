@@ -127,4 +127,67 @@ const testAmount2 = canMakeAmount(1651, drawerAmount); // Returns true
 console.log({ testAmount1 });
 console.log({ testAmount2 });
 
+//*LVL 5
 
+const drawerTransaction = [
+  { name: 'penny', value: 1, quantity: 2 },
+  { name: 'nickel', value: 5, quantity: 0 },
+  { name: 'dime', value: 10, quantity: 0 },
+  { name: 'quarter', value: 25, quantity: 3 },
+  { name: 'one', value: 100, quantity: 2 },
+  { name: 'five', value: 500, quantity: 1 },
+  { name: 'ten', value: 1000, quantity: 1 },
+];
+
+function transaction(cost, paid, drawer) {
+  function calculateChange(cost, paid) {
+    let change = paid - cost;
+    const changeCoins = [];
+    let index = drawer.length - 1;
+
+    while (change > 0 && index >= 0) {
+      const coin = drawer[index];
+
+      if (coin.quantity > 0 && coin.value <= change) {
+        const numCoins = Math.min(
+          Math.floor(change / coin.value),
+          coin.quantity
+        );
+        changeCoins.push({
+          name: coin.name,
+          value: coin.value,
+          quantity: numCoins,
+        });
+        change -= numCoins * coin.value;
+      }
+      index--;
+    }
+    return changeCoins;
+  }
+
+  function updateDrawer(drawer, changeCoins, paid) {
+    drawer.find((coin) => coin.value === paid).quantity += 1;
+    for (const changeCoin of changeCoins) {
+      const drawerCoin = drawer.find((coin) => coin.value === changeCoin.value);
+      drawerCoin.quantity -= changeCoin.quantity;
+    }
+    return drawer;
+  }
+  const changeCoins = calculateChange(cost, paid);
+  return updateDrawer(drawer, changeCoins, paid);
+}
+
+const returnedDrawerTest = transaction(450, 1000, drawerTransaction);
+console.log({ returnedDrawerTest });
+/*
+Returns the following drawer with 1 five and 2 quarters removed and 1 ten added.
+[
+  { name: 'penny', value: 1, quantity: 2 },
+  { name: 'nickel', value: 5, quantity: 0 },
+  { name: 'dime', value: 10, quantity: 0 },
+  { name: 'quarter', value: 25, quantity: 1 },
+  { name: 'one', value: 100, quantity: 2 },
+  { name: 'five', value: 500, quantity: 0 },
+  { name: 'ten', value: 1_000, quantity: 2 }
+]
+*/
